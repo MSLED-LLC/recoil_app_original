@@ -1,13 +1,19 @@
 import React from 'react'
 import {Task} from './Task'
+import { atom, useRecoilValue } from 'recoil'
+
+export const tasksState = atom<number[]> ({
+  key: 'tasks',
+  default: [],
+})
 
 export const Tasks: React.FC = () => {
+  const tasks = useRecoilValue(tasksState)
     return (
         <div>
-            <Task id={0} />
-            <Task id={1} />
-            <Task id={2} />
-            <Task id={3} />
+            {tasks.map(id => (
+              <Task id={0} key={id}/>
+            ))}
         </div>
     )
 }

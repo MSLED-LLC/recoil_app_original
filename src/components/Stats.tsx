@@ -1,6 +1,9 @@
 import React from 'react'
 import {Card} from './Card'
 import styled from 'styled-components'
+import {selector, useRecoilValue} from 'recoil'
+import { tasksState } from './Tasks'
+import { taskState } from './Task'
 
 const StatContainer = styled.div`
     flex: 1;
@@ -45,13 +48,36 @@ const Container = styled(Card)`
     padding-bottom: 15px;
     margin-bottom: 20px;
 `
+const tasksCompleteState = selector({
+    key:'tasksComplete',
+    get: ({get}) => {
+        const taskIds = get(tasksState)
+        const tasks = taskIds.map(id => {
+            return get(taskState(id))
+        })
+        return tasks.filter((task) => task.complete).length
+    }
+})
+
+const tasksRemainingState = selector({
+    key:'tasksRemaining',
+    get: ({get}) => {
+        const taskIds = get(tasksState)
+        const tasks = taskIds.map(id => {
+            return get(taskState(id))
+        })
+        return tasks.filter((task) => !task.complete).length
+    }
+})
 
 export const Stats: React.FC = () => {
+    const tasksComplete = useRecoilValue(tasksCompleteState)
+    const tasksRemaining = useRecoilValue(tasksRemainingState)
     return (
         <Container>
-            <Stat label="Tasks Complete" value="1" />
+            <Stat label="Tasks Complete" value={tasksComplete} />
             <Divider />
-            <Stat label="Tasks Remaining" value="3" />
+            <Stat label="Tasks Remaining" value={tasksRemaining} />
         </Container>
     )
 }
